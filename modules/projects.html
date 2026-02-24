@@ -1,0 +1,121 @@
+<section id="projects">
+  <div class="container reveal">
+    <div class="section-label">projects</div>
+    <h2 class="section-title">What I've been <em>building</em></h2>
+    <div class="projects-list" id="projects-list"><!-- loaded by EOS --></div>
+    <div class="view-all-wrap" id="view-all-wrap" style="display:none; margin-top:1.8rem; text-align:center;">
+      <a href="projects.html" class="view-all-btn">
+        View all projects
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .projects-list { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
+  .project-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.7rem 1.9rem;
+    display: flex; align-items: flex-start; gap: 1.4rem;
+    transition: border-color .25s, transform .25s, box-shadow .25s;
+  }
+  .project-card:hover { border-color: var(--accent); transform: translateX(4px); box-shadow: var(--shadow); }
+  [data-theme="cli"] .project-card { border-radius: 2px; }
+  .project-num {
+    font-family: 'DM Mono', monospace; font-size: .7rem;
+    color: var(--accent); letter-spacing: .1em;
+    padding-top: 3px; flex-shrink: 0; opacity: .7;
+  }
+  [data-theme="cli"] .project-num::before { content: '0x'; }
+  .project-info { flex: 1; }
+  .project-title {
+    font-size: 1.08rem; font-weight: 700; margin-bottom: .38rem;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .project-title a { color: inherit; display: inline-flex; align-items: center; gap: 5px; transition: color .2s; }
+  .project-title a:hover { color: var(--accent); }
+  .project-desc { font-size: .88rem; color: var(--fg2); line-height: 1.65; }
+  .project-tags { display: flex; gap: 6px; margin-top: .9rem; flex-wrap: wrap; align-items: center; }
+  .tag {
+    font-family: 'DM Mono', monospace; font-size: .69rem;
+    padding: 4px 12px; border-radius: 50px;
+    background: var(--tag-bg); color: var(--tag-fg);
+    border: 1px solid var(--border); letter-spacing: .04em;
+    transition: border-color .2s, color .2s;
+  }
+  .tag:hover { border-color: var(--accent); color: var(--accent); }
+  [data-theme="cli"] .tag { border-radius: 2px; }
+  [data-theme="cli"] .tag::before { content: '--'; color: var(--fg3); }
+  .badge {
+    font-family: 'DM Mono', monospace; font-size: .63rem;
+    padding: 5px 10px 3px; border-radius: 50px;
+    background: var(--tag-bg); color: var(--accent);
+    border: 1px solid var(--accent); letter-spacing: .08em;
+    text-transform: uppercase;
+    display: inline-flex; align-items: center; justify-content: center;
+    line-height: 1;
+  }
+  .view-all-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'DM Mono', monospace; font-size: .78rem;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--accent); border: 1px solid var(--accent);
+    padding: 9px 20px; border-radius: 50px;
+    transition: background .2s, color .2s;
+  }
+  .view-all-btn:hover { background: var(--accent); color: var(--bg); }
+  [data-theme="cli"] .view-all-btn { border-radius: 2px; }
+</style>
+
+<script>
+(function() {
+  'use strict';
+
+  const STATUS_LABEL = { ongoing: 'ongoing', completed: 'completed', paused: 'paused', planned: 'planned' };
+  const LINK_ICON = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>`;
+  const PREVIEW_LIMIT = 3;
+
+  async function loadProjects() {
+    const listEl    = document.getElementById('projects-list');
+    const viewAllWrap = document.getElementById('view-all-wrap');
+    if (!listEl) return;
+
+    try {
+      const r = await fetch('data/projects.json');
+      if (!r.ok) throw new Error();
+      const all = await r.json();
+
+      const preview = all.slice(0, PREVIEW_LIMIT);
+
+      listEl.innerHTML = preview.map((p, i) => {
+        const num    = String(i + 1).padStart(3, '0');
+        const tags   = (p.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+        const status = p.status ? `<span class="badge">${STATUS_LABEL[p.status] || p.status}</span>` : '';
+        const titleInner = p.redirect
+          ? `<a href="${p.redirect}" target="_blank" rel="noopener">${p.name} ${LINK_ICON}</a>`
+          : p.name;
+        return `
+          <div class="project-card">
+            <div class="project-num">${num}</div>
+            <div class="project-info">
+              <div class="project-title">${titleInner}</div>
+              <div class="project-desc">${p.desc}</div>
+              <div class="project-tags">${tags}${status}</div>
+            </div>
+          </div>`;
+      }).join('');
+
+      // auto show "view all" if more than 3 projects
+      if (all.length > PREVIEW_LIMIT && viewAllWrap) {
+        viewAllWrap.style.display = 'block';
+      }
+
+    } catch {
+      listEl.innerHTML = '<p style="color:var(--fg3);font-family:monospace;font-size:.8rem;">// could not load data/projects.json</p>';
+    }
+  }
+
+  loadProjects();
+})();
+</script>
