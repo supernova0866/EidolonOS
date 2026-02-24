@@ -40,7 +40,7 @@ Full documentation in [Guide.md](Guide.md).
 ## Support
 
 ⭐ Star if you like it  
-☕ [Support on Ko-fi](#)  
+☕ [Support on Ko-fi](#)  (No Page Yet, Still a minor)
 💡 [Suggest a feature](#) 
 
 📬 Questions? Message me on Discord: `@supernova0866`
