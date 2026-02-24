@@ -1,0 +1,258 @@
+<section id="discord">
+  <div class="container reveal">
+    <div class="section-label">discord presence</div>
+    <h2 class="section-title">Catch me <em>live</em></h2>
+
+    <a id="dc-card-link" href="#" target="_blank" rel="noopener" class="discord-card">
+
+      <!-- profile row -->
+      <div class="dc-profile">
+        <div class="dc-avatar-wrap">
+          <img id="dc-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Discord avatar" class="dc-avatar" />
+          <div class="dc-dot" id="dc-dot"></div>
+        </div>
+        <div class="dc-info">
+          <div class="dc-name" id="dc-displayname">—</div>
+          <div class="dc-username" id="dc-username">@—</div>
+          <div class="dc-badges" id="dc-badges"></div>
+        </div>
+      </div>
+
+      <!-- activity -->
+      <div id="dc-activity" class="dc-activity">
+        <span class="dc-loading">// connecting...</span>
+      </div>
+
+      <!-- divider -->
+      <div class="dc-divider" id="dc-divider"></div>
+
+      <!-- spotify -->
+      <div class="dc-spotify" id="dc-spotify">
+        <img id="dc-sp-art" src="" alt="Album art" class="dc-sp-art" />
+        <div class="dc-sp-info">
+          <div class="dc-sp-label" id="dc-sp-label">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="#1db954"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 0 1-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.623.623 0 0 1-.277-1.215c3.809-.87 7.077-.496 9.712 1.115.294.18.387.563.207.857zm1.223-2.722a.78.78 0 0 1-1.072.257c-2.687-1.652-6.785-2.131-9.965-1.166a.78.78 0 0 1-.973-.519.781.781 0 0 1 .52-.973c3.632-1.102 8.147-.568 11.233 1.329a.78.78 0 0 1 .257 1.072zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71a.937.937 0 1 1-.543-1.793c3.541-1.073 9.43-.866 13.152 1.337a.937.937 0 0 1-.992 1.613z"/></svg>
+            listening now
+          </div>
+          <div class="dc-sp-song" id="dc-sp-song">—</div>
+          <div class="dc-sp-artist" id="dc-sp-artist">—</div>
+          <div class="dc-sp-bar-wrap" id="dc-sp-bar-wrap">
+            <div class="dc-sp-bar" id="dc-sp-bar"></div>
+          </div>
+        </div>
+      </div>
+
+    </a>
+
+    <!-- lanyard warning — shown if fetch fails -->
+    <p class="dc-warning" id="dc-warning" style="display:none">
+      ⚠ Could not reach Lanyard. Did you join
+      <a href="https://discord.gg/lanyard" target="_blank" rel="noopener">discord.gg/lanyard</a>?
+    </p>
+
+  </div>
+</section>
+
+<style>
+  .discord-card {
+    display: flex; flex-direction: column;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; overflow: hidden;
+    transition: border-color .25s, box-shadow .25s;
+    position: relative; color: var(--fg);
+    max-width: 480px;
+  }
+  .discord-card::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(circle at 80% 20%, var(--accent), transparent 55%);
+    opacity: .04; z-index: 0;
+  }
+  .discord-card:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+  [data-theme="cli"] .discord-card { border-radius: 2px; }
+
+  .dc-profile {
+    display: flex; align-items: center; gap: 1.2rem;
+    padding: 1.6rem 1.8rem 1.4rem; position: relative; z-index: 1;
+  }
+  .dc-avatar-wrap { position: relative; flex-shrink: 0; }
+  .dc-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    border: 3px solid var(--border); background: var(--bg3); object-fit: cover;
+  }
+  .dc-dot {
+    position: absolute; bottom: 2px; right: 2px;
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 3px solid var(--card); background: #747f8d;
+  }
+  .dc-dot.online { background: #43b581; }
+  .dc-dot.idle   { background: #faa61a; }
+  .dc-dot.dnd    { background: #f04747; }
+  .dc-info { flex: 1; min-width: 0; }
+  .dc-name { font-size: 1.15rem; font-weight: 700; line-height: 1.2; }
+  .dc-username { font-family: 'DM Mono', monospace; font-size: .72rem; color: var(--fg3); margin-top: 2px; }
+  .dc-badges { display: flex; gap: 6px; margin-top: .7rem; flex-wrap: wrap; align-items: center; }
+  .dc-badge {
+    width: 22px; height: 22px; object-fit: contain;
+    opacity: .9; transition: opacity .2s, transform .2s;
+  }
+  .dc-badge:hover { opacity: 1; transform: scale(1.2); }
+
+  .dc-activity {
+    font-size: .82rem; color: var(--fg2);
+    padding: 0 1.8rem .5rem; position: relative; z-index: 1;
+    font-style: italic; min-height: 1.2rem;
+  }
+  .dc-loading { font-family: 'DM Mono', monospace; font-size: .73rem; color: var(--fg3); letter-spacing: .08em; font-style: normal; }
+
+  .dc-divider { height: 1px; background: var(--border); margin: 0 1.8rem; opacity: 0; transition: opacity .3s; }
+  .dc-divider.visible { opacity: 1; }
+
+  .dc-spotify { display: none; align-items: center; gap: 1.1rem; padding: 1.2rem 1.8rem 1.5rem; position: relative; z-index: 1; }
+  .dc-spotify.active { display: flex; }
+  .dc-sp-art { width: 54px; height: 54px; border-radius: 8px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border); }
+  .dc-sp-info { flex: 1; min-width: 0; }
+  .dc-sp-label {
+    font-family: 'DM Mono', monospace; font-size: .62rem;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: #1db954; margin-bottom: .35rem;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .dc-sp-song { font-weight: 700; font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dc-sp-artist { font-size: .78rem; color: var(--fg2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dc-sp-bar-wrap { margin-top: .7rem; height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .dc-sp-bar { height: 100%; background: #1db954; border-radius: 99px; width: 0%; transition: width .8s linear; }
+  .dc-spotify--idle .dc-sp-song { color: var(--fg3); font-style: italic; font-weight: 400; font-family: 'Instrument Serif', serif; font-size: 1rem; }
+
+  .dc-warning {
+    margin-top: 1rem;
+    font-family: 'DM Mono', monospace; font-size: .75rem;
+    color: var(--fg3); letter-spacing: .04em;
+  }
+  .dc-warning a { color: var(--accent); }
+</style>
+
+<script>
+(function() {
+  'use strict';
+
+  const DISCORD_ID = window.__EOS_DISCORD_ID__;
+  if (!DISCORD_ID) {
+    document.getElementById('dc-activity').innerHTML = '<span class="dc-loading">// no discord ID configured</span>';
+    return;
+  }
+
+  // set profile link
+  const cardLink = document.getElementById('dc-card-link');
+  if (cardLink) cardLink.href = `https://discord.com/users/${DISCORD_ID}`;
+
+  const REFRESH_MS = 10000;
+  const IDLE_LINES = [
+    "Doing nothing",
+    "zzz...",
+    "Just vibing",
+    "Nothing interesting",
+    "Probably offline",
+  ];
+
+  let spBarTimer  = null;
+  let lastIdleIdx = -1;
+
+  function startSpotifyBar(start, end) {
+    stopSpotifyBar();
+    function tick() {
+      const pct = Math.min(100, Math.max(0, ((Date.now() - start) / (end - start)) * 100));
+      const bar = document.getElementById('dc-sp-bar');
+      if (bar) bar.style.width = pct + '%';
+    }
+    tick();
+    spBarTimer = setInterval(tick, 1000);
+  }
+
+  function stopSpotifyBar() {
+    if (spBarTimer) { clearInterval(spBarTimer); spBarTimer = null; }
+    const bar = document.getElementById('dc-sp-bar');
+    if (bar) bar.style.width = '0%';
+  }
+
+  async function fetchDiscord() {
+    try {
+      const res  = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
+      const json = await res.json();
+      if (!json.success) throw new Error('Lanyard error');
+      const d = json.data;
+
+      // avatar
+      const avatarHash = d.discord_user.avatar;
+      const avatarUrl  = avatarHash
+        ? `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${avatarHash}.${avatarHash.startsWith('a_') ? 'gif' : 'png'}?size=128`
+        : `https://cdn.discordapp.com/embed/avatars/0.png`;
+      document.getElementById('dc-avatar').src = avatarUrl;
+
+      // names
+      document.getElementById('dc-displayname').textContent = d.discord_user.global_name || d.discord_user.username;
+      document.getElementById('dc-username').textContent = '@' + d.discord_user.username;
+
+      // status dot
+      document.getElementById('dc-dot').className = 'dc-dot ' + (d.discord_status || 'offline');
+
+      // activity text
+      const actEl = document.getElementById('dc-activity');
+      const TYPE_LABELS = ['Playing', 'Streaming', 'Listening to', 'Watching', '', 'Competing in'];
+      const act    = (d.activities || []).find(a => a.type !== 4 && a.type !== 2);
+      const custom = (d.activities || []).find(a => a.type === 4);
+      if (act) {
+        actEl.textContent = `${TYPE_LABELS[act.type] || ''} ${act.name}${act.details ? ' — ' + act.details : ''}`.trim();
+      } else if (custom && custom.state) {
+        actEl.textContent = custom.state;
+      } else {
+        actEl.textContent = '';
+      }
+
+      // spotify
+      const sp        = d.spotify;
+      const spEl      = document.getElementById('dc-spotify');
+      const dividerEl = document.getElementById('dc-divider');
+      dividerEl.classList.add('visible');
+
+      if (sp && sp.song) {
+        spEl.classList.remove('dc-spotify--idle');
+        document.getElementById('dc-sp-song').textContent   = sp.song;
+        document.getElementById('dc-sp-artist').textContent = sp.artist;
+        const artEl = document.getElementById('dc-sp-art');
+        artEl.style.display = 'block';
+        if (sp.album_art_url) artEl.src = sp.album_art_url;
+        document.getElementById('dc-sp-label').style.display = 'flex';
+        document.getElementById('dc-sp-bar-wrap').style.display = 'block';
+        startSpotifyBar(sp.timestamps.start, sp.timestamps.end);
+      } else {
+        stopSpotifyBar();
+        spEl.classList.add('dc-spotify--idle');
+        let idx;
+        do { idx = Math.floor(Math.random() * IDLE_LINES.length); } while (idx === lastIdleIdx && IDLE_LINES.length > 1);
+        lastIdleIdx = idx;
+        document.getElementById('dc-sp-song').textContent   = IDLE_LINES[idx];
+        document.getElementById('dc-sp-artist').textContent = '';
+        document.getElementById('dc-sp-art').style.display  = 'none';
+        document.getElementById('dc-sp-label').style.display    = 'none';
+        document.getElementById('dc-sp-bar-wrap').style.display = 'none';
+      }
+
+      spEl.style.display = 'flex';
+      spEl.classList.add('active');
+
+      // hide warning if previously shown
+      const warn = document.getElementById('dc-warning');
+      if (warn) warn.style.display = 'none';
+
+    } catch {
+      const actEl = document.getElementById('dc-activity');
+      if (actEl) actEl.innerHTML = '<span class="dc-loading">// could not reach Lanyard</span>';
+      const warn = document.getElementById('dc-warning');
+      if (warn) warn.style.display = 'block';
+    }
+  }
+
+  fetchDiscord();
+  setInterval(fetchDiscord, REFRESH_MS);
+})();
+</script>
