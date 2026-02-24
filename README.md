@@ -44,6 +44,3 @@ Full documentation in [Guide.md](Guide.md).
 💡 [Suggest a feature](#) 
 
 📬 Questions? Message me on Discord: `@supernova0866`
-```
-
-Short and to the point — its only job is to point people to the template and the guide.
